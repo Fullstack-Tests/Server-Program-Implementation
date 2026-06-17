@@ -3,15 +3,13 @@ package com.example.demo;
 import com.example.demo.Domain.Common.Dtos.ProductDTO;
 import com.example.demo.Domain.Common.Repository.ProductRepository;
 import com.example.demo.Domain.Common.Service.ProductService;
-import com.example.demo.Exception.MyBizException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest
 @Transactional   // 테스트 후 자동 롤백
@@ -22,9 +20,21 @@ class ProductServiceTest {
 
     // TODO: 정상 등록 테스트
     //  - ProductDTO 빌더로 유효한 상품 생성 → register → id 가 생성되었는지 assertNotNull
+
+    // 정상 등록 테스트
     @Test
     void register_정상() {
-        fail("TODO: register_정상 테스트 구현");
+
+        ProductDTO dto = ProductDTO.builder()    // 등록할 상품의 DTO 생성
+                .name("케이크")
+                .price(50000)
+                .stock(6)
+                .category("제과")
+                .build();
+
+        ProductDTO result = productService.register(dto);  // DB에 상품 등록
+
+        assertNotNull(result.getId());          // DB 저장 시 id 자동 생성되므로 null 아닌지 확인
     }
 
     // TODO: 일괄등록 중간 실패 시 전체 롤백 테스트
