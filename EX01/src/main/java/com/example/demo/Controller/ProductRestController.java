@@ -7,9 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -62,7 +64,18 @@ public class ProductRestController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> add(@RequestBody @Valid ProductDTO dto,
                                                    BindingResult bindingResult) {
-        return null;
+        Map<String, Object> responseMap = new HashMap<>();  //응답 데이터를 담을 Map 생성
+        if (bindingResult.hasErrors()) {    //검증(@Valid) 실패한 필드가 있는 경우
+            for (FieldError error : bindingResult.getFieldErrors()) {   //오류난 필드들을 순회
+                log.info("Error Field : " + error.getField() + " Error Message : " + error.getDefaultMessage()); //필드명/에러메시지 로그
+                responseMap.put(error.getField(), error.getDefaultMessage());   //필드명을 key, 에러 메시지를 value로 저장
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseMap); //400 Bad Request로 검증 오류 응답
+        }
+        productService.register(dto);   //검증 통과 시 상품 등록 처리
+
+        responseMap.put("message", "상품 등록 성공!");    //성공 메시지 저장
+        return ResponseEntity.status(HttpStatus.OK).body(responseMap); //200 OK 응답
     }
 
 
