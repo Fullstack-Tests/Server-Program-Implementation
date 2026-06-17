@@ -32,7 +32,14 @@ public class ProductDTO {
     // TODO: DTO → Entity 변환 메서드를 구현하라.
     //  - Product.builder() 로 id/name/price/stock/category/createAt 를 매핑하여 Product 객체를 반환한다.
     public Product toEntity() {
-        throw new UnsupportedOperationException("TODO: toEntity 구현");
+        return Product.builder()
+                .id(id)
+                .name(name)
+                .price(price)
+                .stock(stock)
+                .category(category)
+                .createAt(createAt)
+                .build();
     }
 
     // TODO: Entity → DTO 변환(static) 메서드를 구현하라.
