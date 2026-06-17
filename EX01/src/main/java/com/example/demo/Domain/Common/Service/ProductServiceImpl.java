@@ -69,14 +69,22 @@ public class ProductServiceImpl implements ProductService {
 
         return ProductDTO.from(product);    // 변경된 Entity → DTO 형태로 변환해 반환
     }
-    
+
     // TODO: 상품 삭제
     //  - @Transactional 적용
     //  - productRepository.existsById(id) 확인 (없으면 MyBizException)
     //  - productRepository.deleteById(id)
+
+    // 상품 삭제
     @Override
+    @Transactional
     public void remove(Long id) {
-        throw new UnsupportedOperationException("TODO: remove 구현");
+
+        if (!productRepository.existsById(id)) {                      // 삭제할 상품 id 조회
+            throw new MyBizException("해당 상품을 찾을 수 없습니다.");  // id를 찾을 수 없으면 삭제하지 않고 예외 발생시킴
+        }
+
+        productRepository.deleteById(id);                           // 해당 id 상품을 DB에서 삭제
     }
 
     // TODO: 단건 조회
