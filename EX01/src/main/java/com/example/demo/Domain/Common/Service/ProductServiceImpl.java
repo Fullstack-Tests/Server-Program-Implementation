@@ -26,9 +26,19 @@ public class ProductServiceImpl implements ProductService {
     //  - productRepository.existsByName(이름) 으로 중복 검사 → 중복이면 MyBizException 발생
     //  - dto.setCreateAt(LocalDateTime.now()) 설정 후 productRepository.save(dto.toEntity())
     //  - 저장된 Entity 를 ProductDTO.from(...) 으로 변환하여 반환
+
+    // 상품 등록
     @Override
+    @Transactional // 해당 메서드 실행 중 발생하는 DB 작업을 하나의 트랜잭션으로 처리
     public ProductDTO register(ProductDTO dto) {
-        throw new UnsupportedOperationException("TODO: register 구현");
+
+        if (productRepository.existsByName(dto.getName())) {                 // 상품명 중복 검사. 동일한 상품명이 DB에 존재하는지 확인
+            throw new MyBizException("이미 존재하는 상품명입니다.");            // 상품명이 중복 존재하면 등록하지 않고 예외 발생시킴
+        }
+        dto.setCreateAt(LocalDateTime.now());                               // 등록 시간을 현재 시간으로 설정
+        Product product = productRepository.save(dto.toEntity());           // DTO → Entity 로 변환해 db에 저장
+
+        return ProductDTO.from(product);                                    // 저장된 Entity → DTO 형태로 변환해 반환
     }
 
     // TODO: 상품 수정
