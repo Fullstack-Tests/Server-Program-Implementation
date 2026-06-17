@@ -49,7 +49,8 @@ public class ProductRestController {
     //  - productService.get(id) 결과를 200(OK) 으로 반환
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProductDTO> get(@PathVariable("id") Long id) {
-        return null;
+
+        return ResponseEntity.ok(productService.get(id));   //id로 단건 조회 후 결과를 바로 200 OK로 반환
     }
 
 
