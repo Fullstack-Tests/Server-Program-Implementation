@@ -90,9 +90,17 @@ public class ProductServiceImpl implements ProductService {
     // TODO: 단건 조회
     //  - @Transactional(readOnly = true) 적용
     //  - productRepository.findById(id) (없으면 MyBizException) → ProductDTO.from 으로 반환
+
+    // 단건 조회
     @Override
+    @Transactional(readOnly = true)     // 읽기 전용 트랜잭션 true, 성능 최적화
     public ProductDTO get(Long id) {
-        throw new UnsupportedOperationException("TODO: get 구현");
+
+        Product product = productRepository
+                .findById(id)                                   // id로 조회할 상품 Entity 조회
+                .orElseThrow(() -> new MyBizException("해당 상품을 찾을 수 없습니다."));
+
+        return ProductDTO.from(product);                        // 조회한 Entity → DTO 형태로 변환해 반환
     }
 
     // TODO: 목록 조회(페이징)
