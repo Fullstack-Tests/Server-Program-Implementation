@@ -121,8 +121,20 @@ public class ProductServiceImpl implements ProductService {
     //  - @Transactional 적용 (중간 실패 시 부분 저장이 남으면 안 됨)
     //  - list 를 순회하며 저장, 하나라도 existsByName 중복이면 MyBizException 발생 → 전체 롤백
     //  - 저장한 건수(int)를 반환
+
+    // 일괄 등록(한 트랜잭션)
     @Override
+    @Transactional
     public int registerBulk(List<ProductDTO> list) {
-        throw new UnsupportedOperationException("TODO: registerBulk 구현");
+
+        for (ProductDTO dto : list) {                                 // 전달 받은 list를 순회
+            if (productRepository.existsByName(dto.getName())) {     // 동일한 상품명이 DB에 존재하는지 상품명 중복 검사
+                throw new MyBizException("이미 존재하는 상품명입니다.");// 상품명이 중복 존재하면 예외 발생시켜 트랜잭션 전체 롤백
+            }
+            dto.setCreateAt(LocalDateTime.now());                   // 등록 시간을 현재 시간으로 설정
+            productRepository.save(dto.toEntity());                 // DTO → Entity 로 변환해 db에 저장
+        }
+        return list.size();     // 등록된 상품 건수 반환
     }
+
 }
