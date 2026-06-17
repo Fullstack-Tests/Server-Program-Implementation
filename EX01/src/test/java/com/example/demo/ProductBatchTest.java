@@ -19,5 +19,6 @@ class ProductBatchTest {
     @Test
     void checkSoldOut_동작() {
         int count =  productBatch.checkSoldOut();
+        assertTrue(count >= 0);
     }
 }
