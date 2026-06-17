@@ -56,6 +56,6 @@ public class ProductBatch {
 
     @Transactional(readOnly = true)
     public int checkSoldOut() {
-        throw new UnsupportedOperationException("TODO: checkSoldOut 구현");
+        return (int) productRepository.countByStock(0);
     }
 }
