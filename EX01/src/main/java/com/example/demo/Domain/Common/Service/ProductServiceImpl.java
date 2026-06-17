@@ -47,11 +47,29 @@ public class ProductServiceImpl implements ProductService {
     //  - existsByNameAndIdNot(이름, id) 로 자기 자신 제외 중복 검사
     //  - 조회한 Entity 의 필드를 dto 값으로 변경 → JPA 변경감지(dirty checking)로 update
     //  - 변경된 Entity 를 ProductDTO.from 으로 반환
-    @Override
-    public ProductDTO modify(Long id, ProductDTO dto) {
-        throw new UnsupportedOperationException("TODO: modify 구현");
-    }
 
+    // 상품 수정
+    @Override
+    @Transactional
+    public ProductDTO modify(Long id, ProductDTO dto) {
+
+        Product product = productRepository
+                .findById(id)                                       // id로 수정할 삼품 Entity 조회
+                .orElseThrow(() -> new MyBizException("해당 상품을 찾을 수 없습니다.")); // id를 찾을 수 없으면 수정하지 않고 예외 발생시킴
+
+        if (productRepository.existsByNameAndIdNot(dto.getName(), id)) { // 현재 id 제외 동일한 상품명이 DB에 존재하는지 상품명 중복 검사
+            throw new MyBizException("이미 존재하는 상품명입니다.");        // 상품명이 중복 존재하면 등록하지 않고 예외 발생시킴
+        }
+
+        // Entity 필드 값을 조회해 현재 dto의 값으로 변경
+        product.setName(dto.getName());
+        product.setPrice(dto.getPrice());
+        product.setStock(dto.getStock());
+        product.setCategory(dto.getCategory());
+
+        return ProductDTO.from(product);    // 변경된 Entity → DTO 형태로 변환해 반환
+    }
+    
     // TODO: 상품 삭제
     //  - @Transactional 적용
     //  - productRepository.existsById(id) 확인 (없으면 MyBizException)
