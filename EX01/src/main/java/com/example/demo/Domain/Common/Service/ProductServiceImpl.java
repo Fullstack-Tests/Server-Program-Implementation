@@ -21,7 +21,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    // TODO: 상품 등록
+    // TODO: 상품 등록 
     //  - 메서드 위에 @Transactional 적용
     //  - productRepository.existsByName(이름) 으로 중복 검사 → 중복이면 MyBizException 발생
     //  - dto.setCreateAt(LocalDateTime.now()) 설정 후 productRepository.save(dto.toEntity())
